@@ -1,1 +1,1 @@
-This project is oo create a 3d renderer using python
+This project is to create a 3d renderer using python
