@@ -52,9 +52,12 @@ def world_to_screen(l1):
     ])
     new_col=np.array([[1],[1],[1]])
     l1=np.append(l1,new_col,axis=1)
-    print(l1)
+    l2=[]
     for i in range(3):
-        print(p@l1[i].T)
+        ans=p@l1[i].T
+        print(ans)
+        l2.append(ans)
+    return l2
 
 new_img=Image.new("RGB",(64,64),color='black')
 new_img.putpixel((7,3),(255,255,255))
@@ -65,5 +68,6 @@ l1=np.array([[7,3,0],[12,37,38],[62,53,52]])
 
 draw_triangle(l1)
 fill_triangle(l1)
-world_to_screen(l1)
+l2=np.array([world_to_screen(l1)])
+print(l2)
 new_img.save("out_img.bmp")
