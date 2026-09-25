@@ -39,8 +39,7 @@ def fill_triangle(l1):
             gamma = area_triangle([x,y],l1[2],l1[0])/t_area
 
             if alpha>0 and alpha<1 and beta>0 and beta<1 and gamma>0 and gamma<1:
-                z = alpha * l1[0,2] + beta * l1[1,2] + gamma *l1[2,2]
-                new_img.putpixel((x,y),(255,255,255,round(z)))
+                new_img.putpixel((x,y),(255,255,255))
 
 def world_to_screen(l1):
     znear=0.1
@@ -59,6 +58,13 @@ def world_to_screen(l1):
         l2.append(ans)
     return l2
 
+def trial(x,y,z):
+    x = x/z
+    y = y/z
+    screenx = (x + 1.0) * 0.5 * 64
+    screeny = (1 - y) * 0.5 * 64
+    return round(screenx),round(screeny)
+
 new_img=Image.new("RGB",(64,64),color='black')
 new_img.putpixel((7,3),(255,255,255))
 new_img.putpixel((62,53),(255,255,255))
@@ -66,8 +72,14 @@ new_img.putpixel((12,37),(255,255,255))
 l1=np.array([[7,3,0],[12,37,38],[62,53,52]])
 
 
+# draw_triangle(l1)
+# fill_triangle(l1)
+# l2=np.array([world_to_screen(l1)])
+x1,y1=trial(-1,-1,10)
+x2,y2=trial(1,-1,10)
+x3,y3=trial(0,0,10)
+
+l1=np.array([[x1,y1],[x2,y2],[x3,y3]])
 draw_triangle(l1)
 fill_triangle(l1)
-l2=np.array([world_to_screen(l1)])
-print(l2)
 new_img.save("out_img.bmp")
