@@ -1,3 +1,5 @@
+from textwrap import fill
+
 from PIL import Image
 import numpy as np
 from math import tan
@@ -42,44 +44,41 @@ def fill_triangle(l1):
                 new_img.putpixel((x,y),(255,255,255))
 
 def world_to_screen(l1):
-    znear=0.1
-    f=1/(tan(60/2))
-    p=np.array([[f,0,0,0],
-                [0,f,0,0],
-                [0,f,-1,-2*znear],
+    znear = 1
+    zfar = 10
+    f = 1/(tan(90/2))
+    l1 = np.hstack((l1,np.ones((l1.shape[0],1))))
+    p = np.array([
+                [1,0,0,0],
+                [0,1,0,0],
+                [0,0,(zfar+znear)/(znear-zfar), (2*zfar*znear)/(znear-zfar)],
                 [0,0,-1,0]
     ])
-    new_col=np.array([[1],[1],[1]])
-    l1=np.append(l1,new_col,axis=1)
+    clip = p@l1.T
     l2=[]
     for i in range(3):
-        ans=p@l1[i].T
-        print(ans)
-        l2.append(ans)
-    return l2
+        temp=[]
+        for j in range(3):
+            temp.append(clip[i,j]/clip[3,1])
+        l2.append(temp)
+    l2=np.array([l2])
 
-def trial(x,y,z):
-    x = x/z
-    y = y/z
-    screenx = (x + 1.0) * 0.5 * 64
-    screeny = (1 - y) * 0.5 * 64
-    return round(screenx),round(screeny)
+    return l2.T
+
+
 
 new_img=Image.new("RGB",(64,64),color='black')
 new_img.putpixel((7,3),(255,255,255))
 new_img.putpixel((62,53),(255,255,255))
 new_img.putpixel((12,37),(255,255,255))
-l1=np.array([[7,3,0],[12,37,38],[62,53,52]])
+l1=np.array([[2,1,5],[4,1,5],[3,3,5]])
 
 
 # draw_triangle(l1)
 # fill_triangle(l1)
 # l2=np.array([world_to_screen(l1)])
-x1,y1=trial(-1,-1,10)
-x2,y2=trial(1,-1,10)
-x3,y3=trial(0,0,10)
 
-l1=np.array([[x1,y1],[x2,y2],[x3,y3]])
-draw_triangle(l1)
-fill_triangle(l1)
+
+l2=world_to_screen(l1)
+print(np.shape(l2))
 new_img.save("out_img.bmp")
