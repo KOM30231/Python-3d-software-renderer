@@ -1,4 +1,3 @@
-from textwrap import fill
 
 from PIL import Image
 import numpy as np
@@ -33,15 +32,17 @@ def fill_triangle(l1):
             left=i[1]
         if i[1]>right:
             right=i[1]
-    for x in range(top,bottom+1):
-        for y in range(left,right+1):
+    for x in range(int(top),int(bottom+1)):
+        for y in range(int(left),int(right+1)):
 
             alpha = area_triangle([x,y],l1[0],l1[1])/t_area
             beta = area_triangle([x,y],l1[1],l1[2])/t_area
             gamma = area_triangle([x,y],l1[2],l1[0])/t_area
 
             if alpha>0 and alpha<1 and beta>0 and beta<1 and gamma>0 and gamma<1:
+                
                 new_img.putpixel((x,y),(255,255,255))
+
 
 def world_to_screen(l1):
     znear = 1
@@ -59,11 +60,13 @@ def world_to_screen(l1):
     for i in range(3):
         temp=[]
         for j in range(3):
-            temp.append(clip[i,j]/clip[3,1])
+            temp.append(clip[j,i]/clip[3,1])
         l2.append(temp)
-    l2=np.array([l2])
-
-    return l2.T
+    for i in l2:
+        i[0] = round(((i[0]+1) / 2) * 64)
+        i[1] = round(((1-i[1]) / 2) * 64)
+    l2=np.array(l2)
+    return l2
 
 
 
@@ -80,5 +83,6 @@ l1=np.array([[2,1,5],[4,1,5],[3,3,5]])
 
 
 l2=world_to_screen(l1)
-print(np.shape(l2))
+draw_triangle(l2)
+fill_triangle(l2)
 new_img.save("out_img.bmp")
